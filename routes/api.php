@@ -30,5 +30,6 @@ Route::group(['prefix' => 'auth'], function ($router) {
 
 Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('categories', [CategoryController::class, 'index']);
+    Route::post('categories/store', [CategoryController::class, 'store']);
 });
 

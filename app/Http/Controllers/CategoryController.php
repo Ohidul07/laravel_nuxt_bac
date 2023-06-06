@@ -32,7 +32,22 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'status' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['status' => 0] , 200);
+        }
+        $category = new Category();
+        $category->name = $request->name;
+        $category->status = $request->status;
+        if($category->save()) {
+            return response()->json(['status' => 1,'message' => 'Category is added successfully', 'data' => $category] , 200);    
+        }
+        else {
+            return response()->json(['status' => 0,'message' => 'Try Again. Error occurs!!!'] , 200);
+        }
     }
 
     /**

@@ -27,10 +27,13 @@ class AuthController extends Controller
             'password' => 'required|string|min:6',
         ]);
         if ($validator->fails()) {
-            return response()->json(['status' => 0] , 200);
+            //return response()->json(['status' => 0] , 200);
+            return response()->json(['status' => 0, 'message' => 'Credentials are not correct'] , 200);
         }
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['status' => 2] , 200);
+            //return response()->json(['status' => 2] , 200);
+            return response()->json(['status' => 0, 'message' => 'Credentials are not correct'] , 200);
+
         }
         return $this->createNewToken($token);
     }
@@ -42,11 +45,11 @@ class AuthController extends Controller
         ]);
         if ($validator->fails()) {
             //return response()->json($validator->errors(), 422);
-            return response()->json(['status' => 0] , 200);
+            return response()->json(['status' => 0, 'message' => 'Credentials are not correct'] , 200);
         }
         if (! $token = auth()->attempt($validator->validated())) {
             //return response()->json(['error' => 'Unauthorized'], 401);
-            return response()->json(['status' => 2] , 200);
+            return response()->json(['status' => 0, 'message' => 'Credentials are not correct'] , 200);
         }
         if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
 
@@ -54,7 +57,7 @@ class AuthController extends Controller
             $getUser['token'] = $this->createNewToken($token)->original;
 
             if(isset($getUser)) {
-                return response()->json(['status' => 1, 'user_info' => $getUser] , 200);
+                return response()->json(['status' => 1, 'message' => 'Logged in successfully', 'user_info' => $getUser] , 200);
             }
         }
     }
@@ -126,6 +129,7 @@ class AuthController extends Controller
 
         return response()->json([
             'status' => 1,
+            'message' => 'Logged in successfully',
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,
